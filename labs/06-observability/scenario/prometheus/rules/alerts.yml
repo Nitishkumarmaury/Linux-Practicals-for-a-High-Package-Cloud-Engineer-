@@ -1,0 +1,60 @@
+groups:
+- name: OrderService
+  rules:
+  - alert: HighErrorRate
+    expr: rate(orders_total{status="error"}[5m]) / rate(orders_total[5m]) > 0.1
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: High order error rate
+      description: More than 10% of orders are failing
+
+  - alert: HighLatency
+    expr: histogram_quantile(0.95, rate(order_processing_seconds_bucket[5m])) > 2
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: High order processing latency
+      description: 95th percentile latency is above 2 seconds
+
+- name: PaymentService
+  rules:
+  - alert: PaymentFailures
+    expr: rate(payments_total{status="error"}[5m]) > 0.05
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: High payment failure rate
+      description: More than 5% of payments are failing
+
+  - alert: PaymentLatency
+    expr: histogram_quantile(0.95, rate(payment_processing_seconds_bucket[5m])) > 1
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: High payment processing latency
+      description: 95th percentile payment latency is above 1 second
+
+- name: InventoryService
+  rules:
+  - alert: LowInventory
+    expr: inventory_level < 10
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: Low inventory level
+      description: Product inventory is below 10 units
+
+  - alert: InventoryCheckFailures
+    expr: rate(inventory_checks_total{status="error"}[5m]) > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: Inventory check failures
+      description: Inventory checks are failing

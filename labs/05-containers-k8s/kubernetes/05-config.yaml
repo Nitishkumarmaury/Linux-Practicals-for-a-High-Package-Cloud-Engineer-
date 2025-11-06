@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: cloud-store
+data:
+  DB_HOST: postgresql
+  DB_PORT: "5432"
+  DB_NAME: cloudstore
+  REDIS_HOST: redis
+  REDIS_PORT: "6379"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secrets
+  namespace: cloud-store
+type: Opaque
+data:
+  # These are example values - in production, use proper secret management
+  DB_USER: Y2xvdWRzdG9yZQ== # cloudstore
+  DB_PASSWORD: UGFzc3dvcmQxMjMh # Password123!
+  REDIS_PASSWORD: UmVkaXNQYXNzMTIzIQ== # RedisPass123!

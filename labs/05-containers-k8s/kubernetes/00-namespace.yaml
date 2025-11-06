@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cloud-store
+  labels:
+    name: cloud-store
+    environment: production
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: cloud-store
+data:
+  DB_HOST: "postgresql.cloud-store.svc.cluster.local"
+  DB_PORT: "5432"
+  DB_NAME: "cloudstore"
+  REDIS_HOST: "redis-master.cloud-store.svc.cluster.local"
+  REDIS_PORT: "6379"
+  API_URL: "http://backend-service.cloud-store.svc.cluster.local:3000"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secrets
+  namespace: cloud-store
+type: Opaque
+data:
+  DB_USER: Y2xvdWRzdG9yZQ==  # cloudstore
+  DB_PASSWORD: cGFzc3dvcmQxMjM=  # password123
+  REDIS_PASSWORD: cmVkaXNwYXNzd29yZA==  # redispassword
+  JWT_SECRET: and0c2VjcmV0MTIz  # jwtsecret123

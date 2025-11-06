@@ -1,0 +1,47 @@
+groups:
+- name: application_alerts
+  rules:
+  - alert: HighErrorRate
+    expr: sum(rate(http_requests_total{status=~"5.."}[5m])) / sum(rate(http_requests_total[5m])) > 0.1
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: High HTTP error rate
+      description: Error rate is above 10% for the last 5 minutes
+
+  - alert: HighLatency
+    expr: http_request_duration_seconds{quantile="0.9"} > 2
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: High latency detected
+      description: 90th percentile latency is above 2 seconds
+
+  - alert: HighCPUUsage
+    expr: avg(node_cpu_seconds_total{mode="idle"}) > 80
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: High CPU usage
+      description: CPU usage is above 80% for the last 10 minutes
+
+  - alert: MemoryUsage
+    expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 85
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: High memory usage
+      description: Memory usage is above 85%
+
+  - alert: DiskSpaceUsage
+    expr: 100 - ((node_filesystem_avail_bytes{mountpoint="/"} * 100) / node_filesystem_size_bytes{mountpoint="/"}) > 85
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: High disk usage
+      description: Disk usage is above 85%

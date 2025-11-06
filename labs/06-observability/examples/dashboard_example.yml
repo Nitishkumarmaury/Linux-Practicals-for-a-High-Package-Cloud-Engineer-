@@ -1,0 +1,61 @@
+- name: "Response Time Overview"
+  type: visualization
+  panels:
+    - name: "Average Response Time"
+      type: graph
+      datasource: Prometheus
+      targets:
+        - expr: 'rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m])'
+          legendFormat: '{{endpoint}}'
+      
+    - name: "Response Time Percentiles"
+      type: graph
+      datasource: Prometheus
+      targets:
+        - expr: 'histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, endpoint))'
+          legendFormat: '95th percentile - {{endpoint}}'
+        - expr: 'histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, endpoint))'
+          legendFormat: '99th percentile - {{endpoint}}'
+
+- name: "Error Rates"
+  type: visualization
+  panels:
+    - name: "Error Rate by Endpoint"
+      type: graph
+      datasource: Prometheus
+      targets:
+        - expr: 'sum(rate(http_requests_total{status=~"5.*"}[5m])) by (endpoint) / sum(rate(http_requests_total[5m])) by (endpoint)'
+          legendFormat: '{{endpoint}}'
+
+- name: "System Resources"
+  type: visualization
+  panels:
+    - name: "CPU Usage"
+      type: graph
+      datasource: Prometheus
+      targets:
+        - expr: '100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)'
+          legendFormat: '{{instance}}'
+    
+    - name: "Memory Usage"
+      type: graph
+      datasource: Prometheus
+      targets:
+        - expr: '(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100'
+          legendFormat: '{{instance}}'
+
+- name: "Application Logs"
+  type: logs
+  datasource: Elasticsearch
+  query:
+    index: "logs-*"
+    query: "level:ERROR"
+    timeField: "@timestamp"
+
+- name: "Distributed Tracing"
+  type: trace
+  datasource: Jaeger
+  query:
+    service: "order-service"
+    operation: "process_order"
+    limit: 20

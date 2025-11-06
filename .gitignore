@@ -1,0 +1,5 @@
+# Ignore local SSH keys and backups
+id_rsa
+id_rsa.pub
+*.bak
+/var/backups/

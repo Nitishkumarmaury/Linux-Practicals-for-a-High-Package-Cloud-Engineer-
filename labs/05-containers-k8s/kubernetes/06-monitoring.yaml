@@ -1,0 +1,45 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: backend-monitor
+  namespace: cloud-store
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: backend
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 15s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: database-monitor
+  namespace: cloud-store
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: postgresql
+  podMetricsEndpoints:
+  - port: metrics
+    interval: 30s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: cache-monitor
+  namespace: cloud-store
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: redis
+  podMetricsEndpoints:
+  - port: metrics
+    interval: 30s

@@ -1,0 +1,140 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "panels": [
+    {
+      "title": "Order Success Rate",
+      "type": "graph",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(orders_total{status=\"success\"}[5m]) / rate(orders_total[5m])",
+          "legendFormat": "Success Rate"
+        }
+      ],
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "min": 0,
+          "max": 1
+        }
+      ]
+    },
+    {
+      "title": "Order Processing Latency",
+      "type": "graph",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, rate(order_processing_seconds_bucket[5m]))",
+          "legendFormat": "95th Percentile"
+        },
+        {
+          "expr": "histogram_quantile(0.50, rate(order_processing_seconds_bucket[5m]))",
+          "legendFormat": "Median"
+        }
+      ],
+      "yaxes": [
+        {
+          "format": "s",
+          "min": 0
+        }
+      ]
+    },
+    {
+      "title": "Payment Service Success Rate",
+      "type": "graph",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(payments_total{status=\"success\"}[5m]) / rate(payments_total[5m])",
+          "legendFormat": "Success Rate"
+        }
+      ],
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "min": 0,
+          "max": 1
+        }
+      ]
+    },
+    {
+      "title": "Payment Processing Latency",
+      "type": "graph",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, rate(payment_processing_seconds_bucket[5m]))",
+          "legendFormat": "95th Percentile"
+        }
+      ],
+      "yaxes": [
+        {
+          "format": "s",
+          "min": 0
+        }
+      ]
+    },
+    {
+      "title": "Inventory Levels",
+      "type": "graph",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "inventory_level",
+          "legendFormat": "{{product_id}}"
+        }
+      ],
+      "yaxes": [
+        {
+          "format": "short",
+          "min": 0
+        }
+      ]
+    },
+    {
+      "title": "Service Health",
+      "type": "stat",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "up",
+          "legendFormat": "{{job}}"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "textMode": "value"
+      },
+      "mappings": [
+        {
+          "type": "value",
+          "options": {
+            "1": {
+              "text": "UP",
+              "color": "green"
+            },
+            "0": {
+              "text": "DOWN",
+              "color": "red"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 27,
+  "style": "dark",
+  "title": "Microservices Dashboard",
+  "version": 1
+}
